@@ -1,0 +1,57 @@
+# Prerequisites
+*.d
+
+# Compiled Object Files
+*.slo
+*.lo
+*.o
+*.obj
+
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic Libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran Module Files
+*.mod
+*.smod
+
+# Compiled Static Libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executable
+*.exe
+*.out
+*.app
+
+# Temporary Files
+*.swp
+*.swo
+*~
+*.cmake
+*.user
+*.autosave
+CMakeCache.txt
+Makefile
+
+# Unspecified Files
+*.sql
+*.sqlite
+*.pri
+*.pro
+*.pro.user
+
+# Directories
+**/CMakeFiles
+**/bin
+
+# Ignore all files in backup directory
+backup/
