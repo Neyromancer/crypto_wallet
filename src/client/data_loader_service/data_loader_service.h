@@ -43,7 +43,7 @@ class DataLoaderService {
   socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
 };
-}
-}
+}  // namespace client
+}  // namespace crypto_wallet
 
 #endif // CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
