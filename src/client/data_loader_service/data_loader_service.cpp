@@ -11,7 +11,7 @@
 namespace crypto_wallet {
 namespace client {
 
-DataLoaderService *DataLoaderService::data_loader_ = nullptr;
+std::weak_ptr<DataLoaderService> DataLoaderService::data_loader_ = nullptr;
 
 DataLoaderService::DataLoaderService(std::string &&path) {
   if (SQLITE_OK != sqlite3_open(path.c_str(), &database_))
