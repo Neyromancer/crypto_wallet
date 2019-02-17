@@ -39,26 +39,22 @@ class DataLoaderService {
   /// \brief Get instance of class DataLoaderService..
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoaderService.
-  inline static std::shared_ptr<DataLoaderService> &GetDataLoaderServiceInstance(std::string &&path) 
+  inline static std::unique_ptr<DataLoaderService> &GetDataLoaderServiceInstance(std::string &&path) 
   {
     // data_loader_ = std::make_shared<DataLoaderService>(DataLoaderService(path));
-    if (!DataLoaderService::data_loader_) {
-      auto shrd_ptr = std::make_shared<DataLoaderService>(path);
-      DataLoaderService::data_loader_ = shrd_ptr;
-    }
+    if (!DataLoaderService::data_loader_)
+      DataLoaderService::data_loader_ = std::make_unique<DataLoaderService>(path);
     return data_loader_;
   }
 
   /// \brief Get instance of class DataLoaderService.
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoaderService.
-  inline static std::shared_ptr<DataLoaderService> &GetDataLoaderServiceInstance(const std::string &path) 
+  inline static std::unique_ptr<DataLoaderService> &GetDataLoaderServiceInstance(const std::string &path) 
   {
     // data_loader_ = std::make_shared<DataLoaderService>(DataLoaderService(path));
-    if (!DataLoaderService::data_loader_) {
-      auto shrd_ptr = std::make_shared<DataLoaderService>(path);
-      DataLoaderService::data_loader_ = shrd_ptr;
-    }
+    if (!DataLoaderService::data_loader_)
+      DataLoaderService::data_loader_ = std::make_unique<DataLoaderService>(path);
     return data_loader_;
     // static DataLoaderService data_loader(path);
     // return &data_loader;
@@ -112,7 +108,7 @@ default;
   std::string data_{};
   sqlite3 *database_{nullptr};
   // static std::shared_ptr<DataLoaderService> data_loader_{};
-  static std::weak_ptr<DataLoaderService> data_loader_;
+  static std::unique_ptr<DataLoaderService> data_loader_;
 };
 }  // namespace client
 }  // namespace crypto_wallet
