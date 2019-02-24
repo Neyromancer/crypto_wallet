@@ -60,13 +60,13 @@ class DataLoaderService {
     return data_loader;
   }
 
-  /// \brief Daemonize process.
-  void Daemonize() const noexcept;
-
   /// \brief Creates current database's backup.
   /// \param[in] backup_pat Path to put backuped database.
   void CreateDataBaseBackUp(const std::string &backup_path);
   void CreateDataBaseBackUp(std::string &&backup_path);
+
+  /// \brief Run service as a daemon.
+  void RunAsDaemon();
 
   /// \brief Set and look after the interprocess connection.
   void SetAndProcessConnection();
@@ -146,6 +146,9 @@ class DataLoaderService {
   /// \return DataLoaderService object.
   DataLoaderService &operator=(DataLoaderService &&data_loader_service) =
 default;
+
+  /// \brief Daemonize process.
+  void Daemonize() const noexcept;
   
   /// \brief Evaluate database size.
   /// \return Database size.

@@ -7,12 +7,15 @@
 #include "data_loader_service.h"
 
 extern "C" {
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 }
 
 #include <cerrno>
 #include <cstring>
+#include <cstdlib>
 #include <iostream>
 
 #include "boost/format.hpp"
@@ -44,8 +47,11 @@ DataLoaderService::DataLoaderService(const std::string &path) {
   //  std::cout << "database was not created" << std::endl;
 }
 
-void DataLoaderService::Daemonize() const noexcept {
+void DataLoaderService::RunAsDaemon() {
+  Daemonize();
 
+  while (true)
+    sleep(20);
 }
 
 void DataLoaderService::SetAndProcessConnection() {
@@ -87,6 +93,38 @@ void DataLoaderService::SetSqlScript(const std::string &sql_scrpt) {
 
 bool DataLoaderService::IsDataBaseSizeLimitReached() {
   return DB_SIZE_LIMIT <= GetDataBaseSize();
+}
+
+void DataLoaderService::Daemonize() const noexcept {
+  pid_t pid{};
+  pid = fork();
+  
+  if (pid < 0)
+    exit(EXIT_FAILURE);
+
+  if (pid > 0)
+    exit(EXIT_SUCCESS);
+
+  if (setsid() < 0)
+    exit(EXIT_FAILURE);
+
+  signal(SIGCHLD, SIG_IGN);
+  signal(SIGHUP, SIG_IGN);
+
+  pid = fork();
+
+  if (pid < 0)
+    exit(EXIT_FAILURE);
+
+  if (pid > 0)
+    exit(EXIT_SUCCESS);
+
+  umask(0);
+
+  chdir("/");
+
+  for (auto i = sysconf(_SC_OPEN_MAX); i >= 0; --i)
+    close(i);
 }
 
 uint32_t DataLoaderService::GetDataBaseSize() {
