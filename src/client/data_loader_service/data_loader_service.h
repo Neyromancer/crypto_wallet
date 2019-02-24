@@ -12,6 +12,7 @@ extern "C" {
 }
 
 #include <memory>
+#include <cstdint>
 #include <string>
 
 //#include "socket_connection/unix_connection.h"
@@ -62,6 +63,11 @@ class DataLoaderService {
   /// \brief Daemonize process.
   void Daemonize() const noexcept;
 
+  /// \brief Creates current database's backup.
+  /// \param[in] backup_pat Path to put backuped database.
+  void CreateDataBaseBackUp(const std::string &backup_path);
+  void CreateDataBaseBackUp(std::string &&backup_path);
+
   /// \brief Set and look after the interprocess connection.
   void SetAndProcessConnection();
 
@@ -87,13 +93,14 @@ class DataLoaderService {
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
-  //void SetDataBaseName(const std::string &db_name);
+  void SetDataBaseName(const std::string &db_name);
+  void SetDataBaseName(std::string &&db_name);
 
   /// \Get database name.
   /// \return Database name.
-  //std::string GetDataBaseName() const noexcept {
-  //  return db_name_;
-  //}
+  std::string GetDataBaseName() const noexcept {
+    return db_name_;
+  }
 
   /// \brief Set database table name.
   /// \param[in] db_table_name Database table name.
@@ -115,6 +122,10 @@ class DataLoaderService {
     return sql_script_;
   }
 
+  /// \brief Check if database size limit reached.
+  /// \return State of the check if database size limit reached.
+  bool IsDataBaseSizeLimitReached();
+
   /// \brief Create table.
   /// \param[in] table_name Table name.
   ///void CreateTable(const std::string &table_name);
@@ -134,11 +145,15 @@ class DataLoaderService {
   /// \param[in] data_loader_service Class DataLoaderService object.
   /// \return DataLoaderService object.
   DataLoaderService &operator=(DataLoaderService &&data_loader_service) =
-default; 
+default;
+  
+  /// \brief Evaluate database size.
+  /// \return Database size.
+  uint32_t GetDataBaseSize();
 
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
-  //std::string db_name_{};
+  std::string db_name_{};
   sqlite3 *database_{nullptr};
   std::string db_table_name_{};
   std::string sql_script_{};
