@@ -59,6 +59,17 @@ void DataLoaderService::SetDataBaseTableName(const std::string &db_table_name) {
 
 void DataLoaderService::SetSqlScript(const std::string &sql_scrpt) {
   sql_script_ = boost::str(boost::format{sql_scrpt} % db_table_name_);
+  std::cout << sql_script_ << std::endl;
+}
+
+void DataLoaderService::RunSqlScript() {
+  char *errMsg;
+  auto res = sqlite3_exec(database_, GetSqlScript().c_str(), NULL, 0, &errMsg);
+  if (res != SQLITE_OK) {
+    // throw exception here
+    std::cout << "Script evaluation results in error: " << std::string(errMsg) << std::endl;
+    sqlite3_free(errMsg);
+  }
 }
 
 }

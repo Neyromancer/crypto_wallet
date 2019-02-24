@@ -81,6 +81,9 @@ class DataLoaderService {
   inline sqlite3 &GetDataBase() const noexcept {
     return *database_;
   }
+ 
+  /// \brief Create database table.
+  void RunSqlScript();
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
@@ -136,8 +139,8 @@ default;
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
   //std::string db_name_{};
-  std::string db_table_name_{};
   sqlite3 *database_{nullptr};
+  std::string db_table_name_{};
   std::string sql_script_{};
   // static std::shared_ptr<DataLoaderService> data_loader_{};
   //static std::unique_ptr<DataLoaderService> data_loader_;
