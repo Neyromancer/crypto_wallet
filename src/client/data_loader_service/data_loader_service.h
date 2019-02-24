@@ -1,8 +1,8 @@
 /// \file data_loader_service.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.1
-/// \date 16.02.2019
+/// \version 1.0.0.2
+/// \date 24.02.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
@@ -35,29 +35,28 @@ class DataLoaderService {
   /// \return DataLoaderService object.
   //DataLoaderService &operator=(const DataLoaderService &data_loader_service) =
 //delete;
-  
+
+  /// \brief DataLoaderService destructor.
+  ~DataLoaderService() {
+    sqlite3_close(database_);
+  } 
+
   /// \brief Get instance of class DataLoaderService..
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoaderService.
-  inline static std::unique_ptr<DataLoaderService> &GetDataLoaderServiceInstance(std::string &&path) 
+  inline static DataLoaderService &GetDataLoaderServiceInstance(std::string &&path) 
   {
-    // data_loader_ = std::make_shared<DataLoaderService>(DataLoaderService(path));
-    if (!DataLoaderService::data_loader_)
-      DataLoaderService::data_loader_ = std::make_unique<DataLoaderService>(path);
-    return data_loader_;
+    static DataLoaderService data_loader{path};
+    return data_loader;
   }
 
   /// \brief Get instance of class DataLoaderService.
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoaderService.
-  inline static std::unique_ptr<DataLoaderService> &GetDataLoaderServiceInstance(const std::string &path) 
+  inline static DataLoaderService &GetDataLoaderServiceInstance(const std::string &path) 
   {
-    // data_loader_ = std::make_shared<DataLoaderService>(DataLoaderService(path));
-    if (!DataLoaderService::data_loader_)
-      DataLoaderService::data_loader_ = std::make_unique<DataLoaderService>(path);
-    return data_loader_;
-    // static DataLoaderService data_loader(path);
-    // return &data_loader;
+    static DataLoaderService data_loader{path};
+    return data_loader;
   }
 
   /// \brief Daemonize process.
@@ -83,11 +82,41 @@ class DataLoaderService {
     return *database_;
   }
 
-  /// \brief DataLoaderService destructor.
-  ~DataLoaderService() {
-    sqlite3_close(database_);
+  /// \Set database name.
+  /// \param[in] db_name Database bame.
+  //void SetDataBaseName(const std::string &db_name);
+
+  /// \Get database name.
+  /// \return Database name.
+  //std::string GetDataBaseName() const noexcept {
+  //  return db_name_;
+  //}
+
+  /// \brief Set database table name.
+  /// \param[in] db_table_name Database table name.
+  void SetDataBaseTableName(const std::string &db_table_name);
+
+  /// \brief Get database table name.
+  /// \return Database table name.
+  std::string GetDataBaseTableName() const noexcept {
+    return db_table_name_;
   }
- 
+
+  /// \brief Set SQL script.
+  /// \param[in] sql_scrpt SQL script.
+  void SetSqlScript(const std::string &sql_scrpt);
+
+  /// \brief Get SQL script.
+  /// \return SQL script.
+  std::string GetSqlScript() const noexcept {
+    return sql_script_;
+  }
+
+  /// \brief Create table.
+  /// \param[in] table_name Table name.
+  ///void CreateTable(const std::string &table_name);
+  ///void CreateTable(std::string &&table_name);
+
  private:
   /// \brief DataLoaderService constructor.
   /// \param[in] path Path.
@@ -106,9 +135,12 @@ default;
 
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
+  //std::string db_name_{};
+  std::string db_table_name_{};
   sqlite3 *database_{nullptr};
+  std::string sql_script_{};
   // static std::shared_ptr<DataLoaderService> data_loader_{};
-  static std::unique_ptr<DataLoaderService> data_loader_;
+  //static std::unique_ptr<DataLoaderService> data_loader_;
 };
 }  // namespace client
 }  // namespace crypto_wallet
