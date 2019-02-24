@@ -49,12 +49,12 @@ void DataLoaderService::SetData(std::string &&data) {
   data_ = std::move(data);
 }
 
-void DataLoaderService::SetDataBaseName(const std::string &db_name) {
-  db_name_ = db_name;
-}
+//void DataLoaderService::SetDataBaseName(const std::string &db_name) {
+//  db_name_ = db_name;
+//}
 
-void DataLoaderService::SetDataBaseTableName(const std::string db_table_name) {
-  db_table_name = db_table_name_;
+void DataLoaderService::SetDataBaseTableName(const std::string &db_table_name) {
+  db_table_name_ = db_table_name;
 }
 
 void DataLoaderService::SetSqlScript(const std::string &sql_scrpt) {
