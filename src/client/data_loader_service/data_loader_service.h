@@ -90,7 +90,7 @@ default;
 
   /// \brief Check if tmp file is loked.
   /// \return Status of the tmp file.
-  inline bool IsLockerClose() const noexcept {
+  inline bool IsLockerClosed() const noexcept {
     return is_locker_closed_;
   }
   
