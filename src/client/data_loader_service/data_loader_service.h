@@ -1,8 +1,8 @@
 /// \file data_loader_service.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.3
-/// \date 25.02.2019
+/// \version 1.0.0.4
+/// \date 26.02.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
@@ -10,9 +10,7 @@
 #include <cstdint>
 #include <string>
 
-#include "data_loader/data_loader.h"
-
-//#include "socket_connection/unix_connection.h"
+#include "socket_connection/unix_connection.h"
 
 /// \namespace crypto_wallet.
 /// \brief Project namespace.
@@ -87,10 +85,19 @@ default;
  private:
   /// \brief Daemonize process.
   void Daemonize() const noexcept;
+
+  void LockFile() const noexcept;
+
+  /// \brief Check if tmp file is loked.
+  /// \return Status of the tmp file.
+  inline bool IsLockerClose() const noexcept {
+    return is_locker_closed_;
+  }
   
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
   std::string path_{};
+  bool is_locker_closed_{};
 };
 }  // namespace client
 }  // namespace crypto_wallet
