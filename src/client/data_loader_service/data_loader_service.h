@@ -72,13 +72,25 @@ default;
   inline std::string GetData() const noexcept {
     return data_;
   }
- 
+  
+  /// \brief Set path to datatbase.
+  /// \param[in] path Path to database.
+  void SetPath(const std::string &path);
+  void SetPath(std::string &&path);
+
+  /// \brief Get path to database.
+  /// \return Path to database.
+  inline std::string GetPath() const noexcept {
+    return path_;
+  }
+
  private:
   /// \brief Daemonize process.
   void Daemonize() const noexcept;
   
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
+  std::string path_{};
 };
 }  // namespace client
 }  // namespace crypto_wallet

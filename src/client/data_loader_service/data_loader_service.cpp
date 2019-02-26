@@ -23,11 +23,9 @@ namespace client {
 
 #define DB_SIZE_LIMIT 1000 // MB
 
-DataLoaderService::DataLoaderService(std::string &&path) {
-}
+DataLoaderService::DataLoaderService(std::string &&path) : path_{path} {}
 
-DataLoaderService::DataLoaderService(const std::string &path) {
-}
+DataLoaderService::DataLoaderService(const std::string &path) : path_{path} {}
 
 void DataLoaderService::RunAsDaemon() {
   Daemonize();
