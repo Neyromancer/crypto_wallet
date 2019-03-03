@@ -1,8 +1,8 @@
 /// \file data_loader.cpp
 /// \brief Source file containing class DataLoaderService methods definitions.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.0
-/// \date 25.02.2019
+/// \version 1.0.0.1
+/// \date 03.03.2019
 
 #include "data_loader_service.h"
 
@@ -14,8 +14,9 @@ extern "C" {
 }
 
 #include <cerrno>
-#include <cstring>
+#include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include "boost/format.hpp"
@@ -53,7 +54,7 @@ void DataLoader::SetDataBaseName(std::string &&db_name) {
   db_name_ = db_name;
 }
 
-void DataLoader::RunSqlScript() {
+uint32_t DataLoader::RunSqlScript() {
   char *errMsg;
   auto res = sqlite3_exec(database_, GetSqlScript().c_str(), NULL, 0, &errMsg);
   if (res != SQLITE_OK) {
@@ -61,6 +62,7 @@ void DataLoader::RunSqlScript() {
     std::cout << "Script evaluation results in error: " << std::string(errMsg) << std::endl;
     sqlite3_free(errMsg);
   }
+  return res;
 }
 
 void DataLoader::SetDataBaseTableName(const std::string &db_table_name) {
@@ -83,6 +85,41 @@ uint32_t DataLoader::GetDataBaseSize() {
               << std::strerror(errno) << std::endl;
   }
   return (sb.st_size / 1000) / 1000;
+}
+
+bool DataLoader::IsDataBaseTableExist(const std::string &table_name) {
+  if (!is_data_table_exist_) {
+  std::string sql_script = "SELECT COUNT(type) from sqlite_master WHERE type = "
+                            + "'table' AND name = " + GetDataBaseTableName();
+  SetSqlScript(sql_script);
+  is_data_table_exist_ = (RunSqlScript() == 1);
+  }
+  // set to false after backup.
+  return is_data_table_exist_;
+}
+
+bool DataLoader::IsDataBaseTableExist(std::string &&table_name) {
+  if (!is_data_table_exist_) {
+  std::string sql_script = "SELECT COUNT(type) from sqlite_master WHERE type = "
+                            + "'table' AND name = " + GetDataBaseTableName();
+  SetSqlScript(sql_script);
+  is_data_table_exist_ = (RunSqlScript() == 1);
+  }
+
+  // set to false after backup.
+  return is_data_table_exist_;
+}
+
+bool DataLoader::IsDataBaseTableExist() {
+  if (!is_data_table_exist_) {
+  std::string sql_script = "SELECT COUNT(type) from sqlite_master WHERE type = "
+                            + "'table' AND name = " + GetDataBaseTableName();
+  SetSqlScript(sql_script);
+  is_data_table_exist_ = (RunSqlScript() == 1);
+  }
+
+  // set to false after backup.
+  return is_data_table_exist_;
 }
 
 } // namespace client

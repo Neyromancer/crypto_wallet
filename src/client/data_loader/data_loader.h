@@ -1,8 +1,8 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.0
-/// \date 25.02.2019
+/// \version 1.0.0.1
+/// \date 03.03.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -41,8 +41,7 @@ class DataLoader {
   /// \brief Get instance of class DataLoader.
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoader.
-  inline static DataLoader &GetDataLoaderInstance(std::string &&path) 
-  {
+  inline static DataLoader &GetDataLoaderInstance(std::string &&path) {
     static DataLoader data_loader{path};
     return data_loader;
   }
@@ -50,8 +49,7 @@ class DataLoader {
   /// \brief Get instance of class DataLoader.
   /// \param[in] path Path to the DB.
   /// \return Instance of class DataLoader.
-  inline static DataLoader &GetDataLoaderInstance(const std::string &path) 
-  {
+  inline static DataLoader &GetDataLoaderInstance(const std::string &path) {
     static DataLoader data_loader{path};
     return data_loader;
   }
@@ -63,7 +61,8 @@ class DataLoader {
   }
  
   /// \brief Create database table.
-  void RunSqlScript();
+  /// \return Result of executing particular script.
+  uint32_t RunSqlScript();
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
@@ -100,6 +99,14 @@ class DataLoader {
   /// \return State of the check if database size limit reached.
   bool IsDataBaseSizeLimitReached();
 
+  /// \brief Check if table with passed name is already exist in db.
+  /// \param[in] table_name Table name.
+  /// \return Result of the check if the table with specified name is already
+  /// \return in db.
+  bool IsDataBaseTableExist(const std::string &table_name);
+  bool IsDataBaseTableExist(std::string &&table_name);
+  bool IsDataBaseTableExist();
+
  private:
   /// \brief DataLoader constructor.
   /// \param[in] path Path.
@@ -123,6 +130,7 @@ class DataLoader {
   sqlite3 *database_{nullptr};
   std::string db_table_name_{};
   std::string sql_script_{};
+  bool is_data_table_exist_{false};
 };
 }  // namespace client
 }  // namespace crypto_wallet
