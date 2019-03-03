@@ -90,7 +90,7 @@ uint32_t DataLoader::GetDataBaseSize() {
 bool DataLoader::IsDataBaseTableExist(const std::string &table_name) {
   if (!is_data_table_exist_) {
   std::string sql_script = "SELECT COUNT(type) from sqlite_master WHERE type = "
-                            + "'table' AND name = " + GetDataBaseTableName();
+                            + "'table' AND name = " + table_name;
   SetSqlScript(sql_script);
   is_data_table_exist_ = (RunSqlScript() == 1);
   }
@@ -101,7 +101,7 @@ bool DataLoader::IsDataBaseTableExist(const std::string &table_name) {
 bool DataLoader::IsDataBaseTableExist(std::string &&table_name) {
   if (!is_data_table_exist_) {
   std::string sql_script = "SELECT COUNT(type) from sqlite_master WHERE type = "
-                            + "'table' AND name = " + GetDataBaseTableName();
+                            + "'table' AND name = " + table_name;
   SetSqlScript(sql_script);
   is_data_table_exist_ = (RunSqlScript() == 1);
   }
