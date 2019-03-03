@@ -1,8 +1,8 @@
 /// \file data_loader_service.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.4
-/// \date 26.02.2019
+/// \version 1.0.0.5
+/// \date 03.03.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_SERVICE_H_
@@ -88,16 +88,14 @@ default;
 
   void LockFile() const noexcept;
 
-  /// \brief Check if tmp file is loked.
+  /// \brief Check if lock file is loked.
   /// \return Status of the tmp file.
-  inline bool IsLockerClosed() const noexcept {
-    return is_locker_closed_;
-  }
+  bool IsLockerClosed() const noexcept; 
   
   //socket_communication::UnixConnection unix_connect_{};
   std::string data_{};
   std::string path_{};
-  bool is_locker_closed_{};
+  bool is_locker_closed_{false};
 };
 }  // namespace client
 }  // namespace crypto_wallet

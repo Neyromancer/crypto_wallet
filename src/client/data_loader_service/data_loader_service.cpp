@@ -1,8 +1,8 @@
 /// \file data_loader_service.cpp
 /// \brief Source file containing class DataLoaderService methods definitions.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.4
-/// \date 26.02.2019
+/// \version 1.0.0.5
+/// \date 03.03.2019
 
 #include "data_loader_service.h"
 
@@ -29,7 +29,7 @@ namespace client {
 #define DB_BACKUP_NAME "test_db.backup"
 #define CREATE_TBALE
 #define INSERT_DATA
-#define FILE_LOCKER "file_locker"
+#define FILE_LOCKED "mandatory_file_locker"
 
 DataLoaderService::DataLoaderService(std::string &&path) : path_{path} {}
 
@@ -98,11 +98,50 @@ void DataLoaderService::Daemonize() const noexcept {
     close(i);
 }
 
+// move this method to the main module of the programm.
 void DataLoaderService::LockFile() const noexcept {
-  auto fd = open(FILE_LOCKER, O_CREATE|O_EXCL); 
+  auto fd = open(FILE_LOCKED, O_NONBLOCK|O_RDWR);
   if (fd < 0) {
     exit(EXIT_FAILURE);
   }
+
+  auto res = fchmod(fd, S_ISGID & ~S_IXGRP);
+  if (res < 0) {
+    // throw exception here or return error code
+    return EXIT_FAILURE;
+  }
+
+  static struct flock lock;
+  lock.l_type = F_WRLCK;
+  lock.l_start = 0;
+  lock.l_whence = SEEK_SET;
+  lock.l_len = 0;
+  lock.l_pid = getpid();
+
+  res = fcntl(fd, F_SETLKW, &lock);
+  if (res < 0) {
+    // throw exception here or return error code
+    std::cout << "Function fcntl returned with error: " 
+              << std::strerror(errno) << std::endl;
+  }
+}
+
+// move this method to the main module of the programm.
+bool DataLoaderService::IsLockerClosed() const noexcept {
+  if (!is_locker_closed_) {
+    struct stat sb{};
+    if (stat(FILE_LOCKED, &sb) == -1) {
+      // log this info later
+      std::cout << std::strerror(errno) << std::endl;
+      is_locker_closed_ = false;
+    }
+
+    if ((sb.st_mode & ~S_IFMT) != S_IXGRP && 
+        (sb.st_mode & ~S_IFMT) == S_ISGID)
+      is_locker_closed_ = true;
+  }
+
+  return is_locker_closed_;
 }
 
 } // namespace client
