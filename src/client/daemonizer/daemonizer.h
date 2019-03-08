@@ -22,13 +22,16 @@ namespace client {
 class Daemonizer {
  public:
   /// \brief Daemonizer constructor.
-  /// \param[in] path Path.
-  Daemonizer(std::string &&path);
-  Daemonizer(const std::string &path);
+  /// \param[in] path Path to daemon working directory.
+  /// \param[in] uid User ID.
+  /// \param[in] gid Group ID.
+  Daemonizer(std::string &&path, int uid, int gid);
+  Daemonizer(const std::string &path, int uid, int gid);
 
   /// \brief DataLoaderService destructor.
   ~Daemonizer() = default;
 
+  // TODO try to make these funcitons constexpr and if needed.
   /// \brief Class Daemonizer move constructor.
   /// \param[in] daemon Class DataLoaderService object.
   Daemonizer(Daemonizer &&daemon) = default;
@@ -50,13 +53,40 @@ class Daemonizer {
   /// \brief Daemonize process.
   void Daemonize() const noexcept;
 
+  /// \brief Set user and group id for the deamon to use.
+  /// \param[in] user_id User ID.
+  /// \param[in] group_id Group ID.
+  void SetUserAndGroupID(int user_id, int group_id);
+  
+  /// \brief Get user ID.
+  /// \return User ID.
+  constexpr int GetUserID() const noexcept {
+    return user_id_;
+  }
+
+  constexpr int GetGroupID() const noexcept {
+    return group_id_;
+  }
+
   /// \brief Run as daemon.
   void RunAsDaemon() const noexcept = 0;
 
-  /// \Catch system signals.
+  /// \brief Catch system signals.
   void SignalCatcher() const noexcept;
 
-  bool IsDaemonRunning() const noexcept {
+  /// \brief Change root directory.
+  /// \param[in] change Set whether to change root directory.
+  void ChangeRootDirectory(bool change);
+
+  /// \brief Return status of whether root directory changed.
+  /// \return Status of whether root directory changed.
+  constexpr bool IsRootDirectoryChanged() const noexcept {
+    return is_chroot_;
+  }
+
+  /// \brief Return result of weather the daemon is active or not.
+  /// \return Weather deamon is running or not.
+  constexpr bool IsDaemonRunning() const noexcept {
     return is_daemon_running_;
   }
 
@@ -64,8 +94,11 @@ class Daemonizer {
   /// \brief Handle system signals.
   void SignalHandler() const noexcept;
 
+  std::string daemon_working_directory_;
+  int user_id_; 
+  int group_id_;
+  bool is_chroot_{true};
   bool is_daemon_running_{false};
-  
 };
 }  // namespace client
 }  // namespace crypto_wallet
