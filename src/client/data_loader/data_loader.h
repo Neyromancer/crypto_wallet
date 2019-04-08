@@ -1,8 +1,8 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.1
-/// \date 03.03.2019
+/// \version 1.0.0.4
+/// \date 09.04.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -12,6 +12,8 @@ extern "C" {
 }
 
 #include <cstdint>
+#include <initializer_list>
+#include <memory>
 #include <string>
 
 /// \namespace crypto_wallet.
@@ -24,19 +26,8 @@ namespace client {
 /// \brief Class responsible for loading data into DB.
 class DataLoader {
  public:
-  /// \brief Class DataLoader copy constructor.
-  /// \param[in] data_loader_ Class DataLoader object.
-  //DataLoader(const DataLoader &data_loader) = delete;
-
-  /// \brief Class DataLoader copy assignment.
-  /// \param[in] data_loader Class DataLoader object.
-  /// \return DataLoader object.
-  //DataLoader &operator=(const DataLoader &data_loader) = delete;
-
   /// \brief DataLoader destructor.
-  ~DataLoader() {
-    sqlite3_close(database_);
-  } 
+  ~DataLoader();
 
   /// \brief Get instance of class DataLoader.
   /// \param[in] path Path to the DB.
@@ -56,9 +47,7 @@ class DataLoader {
 
   /// \brief Get DB.
   /// \return DB.
-  inline sqlite3 &GetDataBase() const noexcept {
-    return *database_;
-  }
+  sqlite3 *GetDataBase() const noexcept; 
  
   /// \brief Create database table.
   /// \return Result of executing particular script.
@@ -71,9 +60,7 @@ class DataLoader {
 
   /// \Get database name.
   /// \return Database name.
-  std::string GetDataBaseName() const noexcept {
-    return db_name_;
-  }
+  std::string GetDataBaseName() const noexcept; 
 
   /// \brief Set database table name.
   /// \param[in] db_table_name Database table name.
@@ -81,9 +68,15 @@ class DataLoader {
 
   /// \brief Get database table name.
   /// \return Database table name.
-  std::string GetDataBaseTableName() const noexcept {
-    return db_table_name_;
-  }
+  std::string GetDataBaseTableName() const noexcept;
+
+  /// \brief Insert data into database.
+  /// \param[in] val_lst List of values.
+  void InsertIntoTable(std::initializer_list<std::string> val_lst);
+
+  /// \brief Select values for the passed columns.
+  /// \param[in] val_lst List of values.
+  void SelectFromTable(std::initializer_list<std::string> val_lst);
 
   /// \brief Set SQL script.
   /// \param[in] sql_scrpt SQL script.
@@ -91,9 +84,12 @@ class DataLoader {
 
   /// \brief Get SQL script.
   /// \return SQL script.
-  std::string GetSqlScript() const noexcept {
-    return sql_script_;
-  }
+  std::string GetSqlScript() const noexcept;
+
+  // TODO: write better descriptio.
+  // TODO: declare this method.
+  /// \brief Set current database to be used as in-memory database.
+  void SetInMemoryUse();
 
   /// \brief Check if database size limit reached.
   /// \return State of the check if database size limit reached.
@@ -117,20 +113,22 @@ class DataLoader {
   /// \param[in] data_loader Class DataLoader object.
   DataLoader(DataLoader &&data_loader) = default;
 
+  /// \brief Class DataLoader copy constructor.
+  /// \param[in] data_loader Class DataLoader object.
+  DataLoader(const DataLoader &data_loader) = delete;
+
   /// \brief Class DataLoader move assignment.
   /// \param[in] data_loader Class DataLoader object.
   /// \return DataLoader object.
   DataLoader &operator=(DataLoader &&data_loader) = default;
 
-  /// \brief Evaluate database size.
-  /// \return Database size.
-  uint32_t GetDataBaseSize();
+  /// brief Class Dataloader copy assignment.
+  /// param[in] data_loader Class DataLoader object.
+  /// \return DataLoader object.
+  DataLoader &operator=(const DataLoader &data_loader) = delete;
 
-  std::string db_name_{};
-  sqlite3 *database_{nullptr};
-  std::string db_table_name_{};
-  std::string sql_script_{};
-  bool is_data_table_exist_{false};
+  struct PimplDBHandler;
+  std::unique_ptr<PimplDBHandler> pimpl_db_handler_;
 };
 }  // namespace client
 }  // namespace crypto_wallet
