@@ -18,6 +18,7 @@ extern "C" {
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <regex>
 
 #include "boost/format.hpp"
 
@@ -29,11 +30,13 @@ namespace {
   }
 
   bool IsInsertValValid(const std::string &insert_val) {
+    
   }
 
   // Name containing ONLY alphanumeric symbols is valid.
   bool IsDBNameValid(const std::string &db_name) {
-    
+    const std::string rex_str{"[a-zA-Z0-9_.-]"};
+    return std::regex_match(db_name, rex_str);
   }
 }
 
