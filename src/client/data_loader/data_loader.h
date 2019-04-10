@@ -1,8 +1,8 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.4
-/// \date 09.04.2019
+/// \version 1.0.0.5
+/// \date 11.04.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -12,7 +12,6 @@ extern "C" {
 }
 
 #include <cstdint>
-#include <initializer_list>
 #include <memory>
 #include <string>
 
@@ -45,13 +44,9 @@ class DataLoader {
     return data_loader;
   }
 
-  /// \brief Get DB.
-  /// \return DB.
-  sqlite3 *GetDataBase() const noexcept; 
- 
-  /// \brief Create database table.
-  /// \return Result of executing particular script.
-  uint32_t RunSqlScript();
+  /// \brief Execute passed SQL script.
+  /// \return Result of executing passed script.
+  uint32_t RunSqlScript(const std::string &sql_script);
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
@@ -72,24 +67,15 @@ class DataLoader {
 
   /// \brief Insert data into database.
   /// \param[in] val_lst List of values.
-  void InsertIntoTable(std::initializer_list<std::string> val_lst);
+  uint32_t InsertIntoTable(const std::string &insert_val) const noexcept;
 
   /// \brief Select values for the passed columns.
   /// \param[in] val_lst List of values.
-  void SelectFromTable(std::initializer_list<std::string> val_lst);
+  uint32_t SelectFromTable(const std::string &select_val) const noexcept;
 
-  /// \brief Set SQL script.
-  /// \param[in] sql_scrpt SQL script.
-  void SetSqlScript(const std::string &sql_scrpt);
-
-  /// \brief Get SQL script.
-  /// \return SQL script.
-  std::string GetSqlScript() const noexcept;
-
-  // TODO: write better descriptio.
-  // TODO: declare this method.
-  /// \brief Set current database to be used as in-memory database.
-  void SetInMemoryUse();
+  /// \brief Is current database used as in-memory database.
+  /// \return Result of checking wether the current DB is in memory.
+  bool IsInMemoryUse() const noexcept;
 
   /// \brief Check if database size limit reached.
   /// \return State of the check if database size limit reached.
@@ -98,10 +84,13 @@ class DataLoader {
   /// \brief Check if table with passed name is already exist in db.
   /// \param[in] table_name Table name.
   /// \return Result of the check if the table with specified name is already
-  /// \return in db.
-  bool IsDataBaseTableExist(const std::string &table_name);
-  bool IsDataBaseTableExist(std::string &&table_name);
-  bool IsDataBaseTableExist();
+  /// \return Status of the passed db table.
+  bool IsDataBaseTableExist(const std::string &table_name) const noexcept;
+  bool IsDataBaseTableExist(std::string &&table_name) const noexcept;
+
+  /// brief Check if current database table exist.
+  /// \return Status of the passed db table.
+  bool IsDataBaseTableExist() const noexcept;
 
  private:
   /// \brief DataLoader constructor.
