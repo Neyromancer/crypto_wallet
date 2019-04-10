@@ -50,8 +50,8 @@ struct DataLoader::PimplDBHandler {
   std::unique_ptr<sqlite3 *> database_ = std::make_unique<sqlite3 *>();
   std::string db_name_{"file::memory:?cache=shared"};
   std::string db_table_name_;
+  std::initializer_list<std::string> db_table_struct_template_;
   bool is_data_table_exist_{false};
-  bool in_memory_{false};
 };
 
 #define DB_SIZE_LIMIT 1000 // MB
@@ -114,11 +114,27 @@ std::string DataLoader::GetDataBaseTableName() const noexcept {
   return pimpl_db_handler_->db_table_name_;
 }
 
-/// TODO implement IsInsertValValid(const std::string &val)
-uint32_t InsertIntoTable(const std::string &insert_val) const noexcept {
+/// TODO: initializer_list to string with colons between elements.
+void SetDBTableStructTemplate(const std::initializer_list<std::string> &db_struct_template) {
+  db_table_struct_template_ = db_struct_template;
+}
+
+std::string GetDBTableStructTemplate() const noexcept {
+  std::string res = "";
+  //auto sz = db_table_struct_template_.size();
+  for (auto el = std::begin(db_table_struct_template_); el != std::end(db_table_struct_template_); ++el) {
+    res += db_table_struct_template[i];
+    if (i < sz - 1)
+      res += ",";
+  }
+}
+
+/// Valid ex: INSERT INTO table_name (col1, ... colN) 
+/// VALUES (val1 ... valN);
+uint32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst) const noexcept {
   uint32_t res{0};
-  if (IsInsertValValid(insert_val))
-    res = RunSqlScript(insert_val);
+  auto insert_template = "INSERT INTO %1% (%2%) VALUES (%3%);"
+    res = RunSqlScript(insert_template);
 
   return res;
 }

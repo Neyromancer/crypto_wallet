@@ -12,6 +12,7 @@ extern "C" {
 }
 
 #include <cstdint>
+#include <initializer_list>
 #include <memory>
 #include <string>
 
@@ -65,9 +66,17 @@ class DataLoader {
   /// \return Database table name.
   std::string GetDataBaseTableName() const noexcept;
 
+  /// \brief Set table struct template.
+  /// \param[in] table_struct Table struct template.
+  void SetDBTableStructTemplate(const std::initializer_list<std::string> &db_struct_template);
+
+  /// \brief Get table struct template.
+  /// \return Current table struct template.
+  std::string GetDBTableStructTemplate() const noexcept;
+
   /// \brief Insert data into database.
   /// \param[in] val_lst List of values.
-  uint32_t InsertIntoTable(const std::string &insert_val) const noexcept;
+  uint32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst) const noexcept;
 
   /// \brief Select values for the passed columns.
   /// \param[in] val_lst List of values.
