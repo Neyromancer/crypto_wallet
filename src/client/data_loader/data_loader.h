@@ -1,7 +1,7 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.5
+/// \version 1.0.0.6
 /// \date 11.04.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -47,7 +47,7 @@ class DataLoader {
 
   /// \brief Execute passed SQL script.
   /// \return Result of executing passed script.
-  uint32_t RunSqlScript(const std::string &sql_script);
+  int32_t RunSqlScript(const std::string &sql_script);
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
@@ -76,11 +76,11 @@ class DataLoader {
 
   /// \brief Insert data into database.
   /// \param[in] val_lst List of values.
-  uint32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst) const noexcept;
+  int32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst) const noexcept;
 
   /// \brief Select values for the passed columns.
   /// \param[in] val_lst List of values.
-  uint32_t SelectFromTable(const std::string &select_val) const noexcept;
+  int32_t SelectFromTable(const std::initializer_list<std::string> &val_list) const noexcept;
 
   /// \brief Is current database used as in-memory database.
   /// \return Result of checking wether the current DB is in memory.
