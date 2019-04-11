@@ -1,7 +1,7 @@
 /// \file data_loader.cpp
 /// \brief Source file containing class DataLoaderService methods definitions.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.5
+/// \version 1.0.0.6
 /// \date 11.04.2019
 
 #include "data_loader.h"
@@ -121,12 +121,13 @@ void SetDBTableStructTemplate(const std::initializer_list<std::string> &db_struc
 
 std::string GetDBTableStructTemplate() const noexcept {
   std::string res = "";
-  //auto sz = db_table_struct_template_.size();
-  for (auto el = std::begin(db_table_struct_template_); el != std::end(db_table_struct_template_); ++el) {
-    res += db_table_struct_template[i];
-    if (i < sz - 1)
-      res += ",";
+  auto sz = db_table_struct_template_.size();
+  for (const auto &el : db_table_struct_template_) {
+    res += el;
+    if (--sz >= 1)
+      res += ", ";
   }
+  return res;
 }
 
 /// Valid ex: INSERT INTO table_name (col1, ... colN) 
