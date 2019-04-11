@@ -1,8 +1,8 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.6
-/// \date 11.04.2019
+/// \version 1.0.0.7
+/// \date 12.04.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -58,10 +58,6 @@ class DataLoader {
   /// \return Database name.
   std::string GetDataBaseName() const noexcept; 
 
-  /// \brief Set database table name.
-  /// \param[in] db_table_name Database table name.
-  void SetDataBaseTableName(const std::string &db_table_name);
-
   /// \brief Get database table name.
   /// \return Database table name.
   std::string GetDataBaseTableName() const noexcept;
@@ -74,13 +70,18 @@ class DataLoader {
   /// \return Current table struct template.
   std::string GetDBTableStructTemplate() const noexcept;
 
+  /// \brief Database table.
+  /// \param[in] table_name Database table name.
+  /// \return Result of creation (Created or not and why).
+  int32_t CreateDBTable(const std::string &table_name);
+
   /// \brief Insert data into database.
   /// \param[in] val_lst List of values.
-  int32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst) const noexcept;
+  int32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst);
 
   /// \brief Select values for the passed columns.
   /// \param[in] val_lst List of values.
-  int32_t SelectFromTable(const std::initializer_list<std::string> &val_list) const noexcept;
+  int32_t SelectFromTable(const std::initializer_list<std::string> &val_list);
 
   /// \brief Is current database used as in-memory database.
   /// \return Result of checking wether the current DB is in memory.
@@ -88,18 +89,18 @@ class DataLoader {
 
   /// \brief Check if database size limit reached.
   /// \return State of the check if database size limit reached.
-  bool IsDataBaseSizeLimitReached();
+  bool IsDataBaseSizeLimitReached() const noexcept;
 
   /// \brief Check if table with passed name is already exist in db.
   /// \param[in] table_name Table name.
   /// \return Result of the check if the table with specified name is already
   /// \return Status of the passed db table.
-  bool IsDataBaseTableExist(const std::string &table_name) const noexcept;
-  bool IsDataBaseTableExist(std::string &&table_name) const noexcept;
+  bool IsDataBaseTableExist(const std::string &table_name);
+  bool IsDataBaseTableExist(std::string &&table_name);
 
   /// brief Check if current database table exist.
   /// \return Status of the passed db table.
-  bool IsDataBaseTableExist() const noexcept;
+  bool IsDataBaseTableExist();
 
  private:
   /// \brief DataLoader constructor.
