@@ -7,7 +7,6 @@
 *.o
 *.obj
 
-
 # Precompiled Headers
 *.gch
 *.pch
@@ -42,9 +41,12 @@
 CMakeCache.txt
 Makefile
 
-# Unspecified Files
+# DB Files
 *.sql
 *.sqlite
+*.db
+
+# Unspecified Files
 *.pri
 *.pro
 *.pro.user
