@@ -45,10 +45,6 @@ class DataLoader {
     return data_loader;
   }
 
-  /// \brief Execute passed SQL script.
-  /// \return Result of executing passed script.
-  int32_t RunSqlScript(const std::string &sql_script);
-
   /// \Set database name.
   /// \param[in] db_name Database bame.
   void SetDataBaseName(const std::string &db_name);
