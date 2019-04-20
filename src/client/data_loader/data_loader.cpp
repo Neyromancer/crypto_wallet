@@ -1,8 +1,8 @@
 /// \file data_loader.cpp
 /// \brief Source file containing class DataLoaderService methods definitions.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.7
-/// \date 13.04.2019
+/// \version 1.0.0.8
+/// \date 20.04.2019
 
 #include "data_loader.h"
 
@@ -20,6 +20,8 @@ extern "C" {
 #include <cstring>
 #include <iostream>
 #include <regex>
+#include <tuple>
+#include <vector>
 
 #include "boost/format.hpp"
 
@@ -58,8 +60,10 @@ namespace {
       if (--sz >= 1)
         res += ", ";
     }
+    std::cout << "init_list_to_string res is " << res << std::endl;
     return res;
   }
+  static std::pair<std::string, std::vector<std::string>> columns_;
 }
 
 struct DataLoader::PimplDBHandler {
@@ -75,6 +79,14 @@ struct DataLoader::PimplDBHandler {
   /// \brief Execute passed SQL script.
   /// \return Result of execution.
   int32_t RunSqlScript(const std::string &sql_script);
+  
+  /// \brief Display returned database value.
+  /// \param[in] Unused parameter.
+  /// \param[in] Number of columns to select.
+  /// \param[out] Data from the columns.
+  /// \param[out] Names of the columns.
+  /// \return Result of calling the method.
+  static int retrieve_db_value(void *, int cols, char **col_data, char **col_names);
 
   //sqlite3 *database_{nullptr};
   std::unique_ptr<sqlite3 *> database_ = std::make_unique<sqlite3 *>();
@@ -82,8 +94,8 @@ struct DataLoader::PimplDBHandler {
   std::string db_table_name_;
   std::string db_table_struct_template_;
   bool is_data_table_exist_{false};
+  bool is_select_{false};
 };
-
 
 DataLoader::DataLoader(std::string &&path = nullptr) 
     : pimpl_db_handler_{std::make_unique<DataLoader::PimplDBHandler>()} {
@@ -122,8 +134,6 @@ void DataLoader::SetDataBaseName(std::string &&db_name) {
 std::string DataLoader::GetDataBaseName() const noexcept {
   return pimpl_db_handler_->db_name_;
 }
-
-
 
 /// leave publi as it can be usefule to be able to check table name
 std::string DataLoader::GetDataBaseTableName() const noexcept {
@@ -164,17 +174,25 @@ int32_t DataLoader::InsertIntoTable(const std::initializer_list<std::string> &va
 
 /// TODO implement IsSelectValValid(const std::string &val)
 /// valid select request ex: SELECT col1, col2, ... colN FROM table_bane;
-int32_t DataLoader::SelectFromTable(const std::initializer_list<std::string> &val_lst) {
-  if (val_lst.size() == 0)
+int32_t DataLoader::SelectColumnFromTable(const std::string &column_name,
+                                          std::pair<std::string, 
+                                                    std::vector<std::string>> &column_data) {
+  if (column_name.empty())
     return SQLITE_MISMATCH;
 
   if (!IsDataBaseTableExist())
     return SQLITE_INTERNAL;
 
+  pimpl_db_handler_->is_select_ = true;
+  std::cout << "select method called | " << pimpl_db_handler_->is_select_ << std::endl;
   std::string select_template = "SELECT %1% FROM %2%;";
-  auto sql_script = boost::str(boost::format{select_template} % init_list_to_string(val_lst) % 
+
+  auto sql_script = boost::str(boost::format{select_template} % column_name % 
                               pimpl_db_handler_->db_table_name_);
-  return pimpl_db_handler_->RunSqlScript(sql_script);
+  auto res = pimpl_db_handler_->RunSqlScript(sql_script);
+  column_data = columns_;
+
+  return res;
 }
 
 bool DataLoader::IsInMemoryUse() const noexcept {
@@ -225,13 +243,18 @@ DataLoader::~DataLoader() {
 
 int32_t DataLoader::PimplDBHandler::RunSqlScript(const std::string &sql_script) {
   char *errMsg;
-  auto res = sqlite3_exec(*((pimpl_db_handler_->database_).get()), 
-                          sql_script.c_str(), NULL, 0, &errMsg);
+  std::cout << "run sql script method is called | select " << is_select_ << std::endl;
+  auto callback = is_select_ ? DataLoader::PimplDBHandler::retrieve_db_value : NULL;
+  auto res = sqlite3_exec(*(database_.get()), 
+                          sql_script.c_str(), DataLoader::PimplDBHandler::retrieve_db_value, 0, &errMsg);
+  is_select_ = false;
+
   if (res != SQLITE_OK) {
     // throw exception here
     std::cout << "Script evaluation results in error: " << std::string(errMsg) << std::endl;
     sqlite3_free(errMsg);
   }
+
   return res;
 }
 
@@ -249,6 +272,21 @@ int32_t DataLoader::PimplDBHandler::GetDataBaseSize() const noexcept {
   }
 
   return (sb.st_size / 1000) / 1000;
+}
+
+int DataLoader::PimplDBHandler::retrieve_db_value(void *, int col, char **col_data, 
+                                                  char **col_name) {
+  std::vector<std::string> res;
+  std::cout << "retrieve_db_value method is called | col " << col << std::endl;
+  for (auto i = 0; i < col; ++i) {
+    std::cout << std::string(col_data[i]) << std::endl;
+    res.push_back(std::move(std::string(col_data[i])));
+  }
+
+  std::cout << col_name[0] << std::endl;
+  columns_ = std::make_pair(std::string(col_name[0]), res);
+
+  return 0;
 }
 
 } // namespace client

@@ -1,16 +1,17 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.7
-/// \date 12.04.2019
+/// \version 1.0.0.8
+/// \date 20.04.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 
 #include <cstdint>
-#include <initializer_list>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 // TODO: change returned values from int32_t
 // to something more miningufl, i.e. error class object.
@@ -75,8 +76,11 @@ class DataLoader {
   int32_t InsertIntoTable(const std::initializer_list<std::string> &val_lst);
 
   /// \brief Select values for the passed columns.
-  /// \param[in] val_lst List of values.
-  int32_t SelectFromTable(const std::initializer_list<std::string> &val_list);
+  /// \param[in] column_name Column name.
+  /// \param[out] column_data Column value.
+  /// \return Result of function work(Success/Failure).
+  int32_t SelectColumnFromTable(const std::string &column_name,
+                                std::pair<std::string, std::vector<std::string>> &column_data);
 
   /// \brief Is current database used as in-memory database.
   /// \return Result of checking wether the current DB is in memory.
