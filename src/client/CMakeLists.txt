@@ -6,20 +6,5 @@ endif()
 
 project(client)
 
-set(CMAKE_CXX_STANDARD 14)
-set (project_src
-     data_loader/data_loader.cpp
-    )
-
-find_package (sqlite3)
-include_directories (${SQLITE3_INCLUDE_DIRS})
-#include_directories (/usr/include)
-#link_directories (/usr/bin)
-
-add_executable (crypto_wallet_client ${project_src} ${SQLITE3_LIBRARIES})
-#target_include_directories(crypto_wallet_test PRIVATE ${UTILS_INCLUDE_DIR})
-#target_link_libraries(crypto_wallet_test)
-
-#add_subdirectory(data_loader)
-
-#add_executable (client
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/data_loader)
+add_subdirectory (data_loader)

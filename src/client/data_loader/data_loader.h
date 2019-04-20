@@ -7,10 +7,6 @@
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 
-extern "C" {
-#include <sqlite3.h>
-}
-
 #include <cstdint>
 #include <initializer_list>
 #include <memory>
