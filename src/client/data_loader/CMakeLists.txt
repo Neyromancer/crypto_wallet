@@ -14,5 +14,5 @@ include_directories (${SQLITE3_INCLUDE_DIRS})
 ## TODO avoid hard coding paths
 set(SQLITE3_LIBRARIES /usr/lib/x86_64-linux-gnu/libsqlite3.a)
 
-add_library (crypto_wallet_client ${project_src})
-target_link_libraries(crypto_wallet_client ${SQLITE3_LIBRARIES} ${CMAKE_DL_LIBS} pthread)
+add_library (client_data_loader ${project_src})
+target_link_libraries(client_data_loader ${SQLITE3_LIBRARIES} ${CMAKE_DL_LIBS} pthread)

@@ -12,6 +12,9 @@
 #include <memory>
 #include <string>
 
+// TODO: change returned values from int32_t
+// to something more miningufl, i.e. error class object.
+
 /// \namespace crypto_wallet.
 /// \brief Project namespace.
 namespace crypto_wallet {

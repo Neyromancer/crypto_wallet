@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-#include "client/data_loader/data_loader.h"
+#include "data_loader/data_loader.h"
 
 namespace crypto_wallet {
 namespace client {

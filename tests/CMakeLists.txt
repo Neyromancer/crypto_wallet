@@ -21,11 +21,11 @@ enable_testing ()
 include_directories (${GTEST_INCLUDE_DIRS})
 include_directories (${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 #include_directories (${CMAKE_WORKING_DIR})
-#include_directories (src/client)
+include_directories (../src/client/data_loader)
 
 # target_include_directories (data_loader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable (crypto_wallet_test ${unittest_sources})
 target_include_directories(crypto_wallet_test PRIVATE ${UTILS_INCLUDE_DIR})
-target_link_libraries (crypto_wallet_test ${GTEST_LIBRARIES} pthread)
+target_link_libraries (crypto_wallet_test ${GTEST_LIBRARIES} client_data_loader pthread)
 #target_link_libraries (crypto_wallet_test gtest gtest_main pthread)

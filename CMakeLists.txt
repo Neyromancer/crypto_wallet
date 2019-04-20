@@ -8,6 +8,7 @@ project(crypto_wallet)
 
 set (CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(./src/client)
-add_subdirectory(tests)
-
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src/client)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/tests)
+add_subdirectory (src/client)
+add_subdirectory (tests)
