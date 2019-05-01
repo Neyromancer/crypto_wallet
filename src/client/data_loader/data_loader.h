@@ -1,8 +1,8 @@
 /// \file data_loader.h
 /// \brief Class responsible for loading data into DB.
 /// \author Dmitry Kormulev <dmitry.kormulev@yandex.ru>
-/// \version 1.0.0.8
-/// \date 20.04.2019
+/// \version 1.0.0.9
+/// \date 01.05.2019
 
 #ifndef CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
 #define CRYPTO_WALLET_CLIENT_DATA_LOADER_H_
@@ -22,6 +22,7 @@ namespace crypto_wallet {
 /// \namespace client
 /// \brief Client namespace.
 namespace client {
+
 /// \class DataLoaderService data_loader_service.h.
 /// \brief Class responsible for loading data into DB.
 class DataLoader {
@@ -47,16 +48,16 @@ class DataLoader {
 
   /// \Set database name.
   /// \param[in] db_name Database bame.
-  void SetDataBaseName(const std::string &db_name);
-  void SetDataBaseName(std::string &&db_name);
+  void SetDBName(const std::string &db_name);
+  void SetDBName(std::string &&db_name);
 
   /// \Get database name.
   /// \return Database name.
-  std::string GetDataBaseName() const noexcept; 
+  std::string GetDBName() const noexcept; 
 
   /// \brief Get database table name.
   /// \return Database table name.
-  std::string GetDataBaseTableName() const noexcept;
+  std::string GetDBTableName() const noexcept;
 
   /// \brief Set table struct template.
   /// \param[in] table_struct Table struct template.
@@ -82,24 +83,34 @@ class DataLoader {
   int32_t SelectColumnFromTable(const std::string &column_name,
                                 std::pair<std::string, std::vector<std::string>> &column_data);
 
+  /// \brief Execute passed SQL sequence.
+  /// \param[in] sql_script SQL script to execute.
+  /// \param[out] db_result_sequence SQL script execution result.
+  /// \return Error code.
+  int32_t ExecuteDirectSQLSequence(const std::string &sql_script, std::string &db_result_sequence);
+
   /// \brief Is current database used as in-memory database.
   /// \return Result of checking wether the current DB is in memory.
   bool IsInMemoryUse() const noexcept;
 
   /// \brief Check if database size limit reached.
   /// \return State of the check if database size limit reached.
-  bool IsDataBaseSizeLimitReached() const noexcept;
+  bool IsDBSizeLimitReached() const noexcept;
 
   /// \brief Check if table with passed name is already exist in db.
   /// \param[in] table_name Table name.
   /// \return Result of the check if the table with specified name is already
   /// \return Status of the passed db table.
-  bool IsDataBaseTableExist(const std::string &table_name);
-  bool IsDataBaseTableExist(std::string &&table_name);
+  bool IsDBTableExist(const std::string &table_name);
+  bool IsDBTableExist(std::string &&table_name);
 
   /// brief Check if current database table exist.
   /// \return Status of the passed db table.
-  bool IsDataBaseTableExist();
+  bool IsDBTableExist();
+
+  /// \brief Check if table struct is already set.
+  /// \return Status of the DB table struct.
+  bool IsDBTableTemplateExist();
 
  private:
   /// \brief DataLoader constructor.
