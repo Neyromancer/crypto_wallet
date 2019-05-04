@@ -13,8 +13,7 @@
 #include <utility>
 #include <vector>
 
-// TODO: change returned values from int32_t
-// to something more miningufl, i.e. error class object.
+// TODO: Instead of returning error just throw exceptions.
 
 /// \namespace crypto_wallet.
 /// \brief Project namespace.
